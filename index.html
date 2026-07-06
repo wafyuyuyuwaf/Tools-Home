@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>工具箱</title>
+
+    <!-- Font Awesome 图标库 (轻量) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+            min-height: 100vh;
+            background: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* ===== 头部 ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #e9edf4;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+
+        .header h1 i {
+            color: #667eea;
+            margin-right: 0.4rem;
+        }
+
+        .badge {
+            background: #eef2f7;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .badge span {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* ===== 卡片网格 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            min-height: 200px;
+        }
+
+        /* ===== 单个卡片 ===== */
+        .tool-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.6rem 1.2rem 1.4rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #edf2f7;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            user-select: none;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 36px rgba(102, 126, 234, 0.12);
+            border-color: #d0d9e8;
+        }
+
+        .tool-card:active {
+            transform: translateY(-2px) scale(0.98);
+            transition-duration: 0.08s;
+        }
+
+        .tool-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        .tool-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b1a33;
+            margin-bottom: 0.2rem;
+        }
+
+        .tool-desc {
+            font-size: 0.82rem;
+            color: #8896ab;
+            line-height: 1.4;
+            flex: 1;
+            margin-bottom: 0.6rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.75rem;
+            color: #b0bcca;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            transition: color 0.2s;
+        }
+
+        .tool-card:hover .card-footer {
+            color: #667eea;
+        }
+
+        .card-footer i {
+            margin-left: 0.3rem;
+            font-size: 0.65rem;
+            transition: transform 0.2s;
+        }
+
+        .tool-card:hover .card-footer i {
+            transform: translateX(3px);
+        }
+
+        /* ===== 空状态 —— 完全空白，无任何文字提示 ===== */
+        .empty-state {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: transparent;
+            border: none;
+            min-height: 280px;
+        }
+
+        .empty-state i {
+            font-size: 2.8rem;
+            color: #e2e8f0;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 1.2rem 1rem 2rem;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 1rem;
+            }
+
+            .tool-card {
+                padding: 1.2rem 0.9rem 1rem;
+            }
+
+            .tool-icon {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.8rem;
+            }
+
+            .tool-name {
+                font-size: 0.95rem;
+            }
+
+            .tool-desc {
+                font-size: 0.72rem;
+            }
+
+            .empty-state i {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 滚动条 ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #eef2f7;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d0d9e8;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b0bcca;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== 头部 ===== -->
+        <header class="header">
+            <h1><i class="fas fa-toolbox"></i>工具箱</h1>
+            <span class="badge"><i class="far fa-folder-open"></i> 共 <span id="toolCount">0</span> 个工具</span>
+        </header>
+
+        <!-- ===== 卡片网格 ===== -->
+        <div class="grid" id="toolGrid">
+            <!-- 由 JavaScript 动态渲染 -->
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * ============================================================
+         *  📦 工具数据 —— 在这里添加你的工具！
+         *  ------------------------------------------------------------
+         *  每个工具对象字段：
+         *    name        : 工具名称（必填）
+         *    description : 简短描述（可选）
+         *    icon        : Font Awesome 类名（如 'fa-calculator'）
+         *                  或 Emoji（如 '🧮'）
+         *    path        : HTML 文件路径，如 './tools/calc.html'
+         *  ------------------------------------------------------------
+         *  💡 添加新工具：在数组中新增一个对象即可。
+         *  💡 删除/修改：直接编辑对应对象。
+         * ============================================================ */
+        const tools = [
+    {
+        name: '拼豆图纸像素化',
+        description: '图片转像素图纸，支持坐标轴与颜色精度',
+        icon: '🧩',
+        path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/tmtx.html'
+    },
+    {
+        name: '透明图像生成',
+        description: '为图片添加圆角矩形阴影，输出透明PNG',
+        icon: '🖼️',
+        path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/scpdtx.html'
+    }
+    ];
+
+        // ============================================================
+        //  渲染
+        // ============================================================
+        const grid = document.getElementById('toolGrid');
+        const countEl = document.getElementById('toolCount');
+
+        function render() {
+            countEl.textContent = tools.length;
+
+            if (tools.length === 0) {
+                grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            tools.forEach(t => {
+                const desc = t.description || '点击打开';
+                const isFa = t.icon && t.icon.startsWith('fa-');
+                const iconHtml = isFa ?
+                    `<i class="fas ${t.icon}"></i>` :
+                    `<span style="font-size:2.2rem;">${t.icon || '🔧'}</span>`;
+                const safePath = t.path.replace(/"/g, '&quot;');
+
+                html += `
+                        <div class="tool-card" data-path="${safePath}" role="button" tabindex="0">
+                            <div class="tool-icon">${iconHtml}</div>
+                            <div class="tool-name">${escapeHtml(t.name)}</div>
+                            <div class="tool-desc">${escapeHtml(desc)}</div>
+                            <div class="card-footer">
+                                打开 <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        // ============================================================
+        //  点击卡片 → 打开工具
+        // ============================================================
+        grid.addEventListener('click', (e) => {
+            const card = e.target.closest('.tool-card');
+            if (!card) return;
+            const path = card.getAttribute('data-path');
+            if (path) window.open(path, '_blank');
+        });
+
+        grid.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const card = e.target.closest('.tool-card');
+                if (card) {
+                    e.preventDefault();
+                    card.click();
+                }
+            }
+        });
+
+        // ============================================================
+        //  启动
+        // ============================================================
+        render();
+
+        // 静默启动，无任何控制台输出
+    </script>
+
+</body>
+</html>
