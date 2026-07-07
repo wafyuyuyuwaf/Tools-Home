@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>工具箱</title>
 
-    <!-- Font Awesome 图标库 (轻量) -->
+    <!-- Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
@@ -30,7 +30,7 @@
             width: 100%;
         }
 
-        /* ===== 头部 ===== */
+        /* ===== 头部（点击触发密码） ===== */
         .header {
             display: flex;
             align-items: center;
@@ -40,6 +40,8 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
             gap: 0.8rem;
+            cursor: pointer;  /* 暗示可点击 */
+            user-select: none;
         }
 
         .header h1 {
@@ -76,7 +78,6 @@
             min-height: 200px;
         }
 
-        /* ===== 单个卡片 ===== */
         .tool-card {
             background: #ffffff;
             border-radius: 20px;
@@ -99,7 +100,6 @@
 
         .tool-card:active {
             transform: translateY(-2px) scale(0.98);
-            transition-duration: 0.08s;
         }
 
         .tool-icon {
@@ -135,7 +135,6 @@
             font-size: 0.75rem;
             color: #b0bcca;
             font-weight: 500;
-            letter-spacing: 0.2px;
             transition: color 0.2s;
         }
 
@@ -153,7 +152,7 @@
             transform: translateX(3px);
         }
 
-        /* ===== 空状态 —— 完全空白，无任何文字提示 ===== */
+        /* ===== 空状态 ===== */
         .empty-state {
             grid-column: 1 / -1;
             display: flex;
@@ -171,25 +170,326 @@
             color: #e2e8f0;
         }
 
+        /* ===== 密码弹窗 ===== */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.50);
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .password-overlay.active {
+            display: flex;
+        }
+
+        .password-modal {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 40px 44px 36px;
+            max-width: 400px;
+            width: 92%;
+            box-shadow: 0 40px 90px rgba(0, 0, 0, 0.30);
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .password-modal .lock-icon {
+            font-size: 52px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .password-modal h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .password-modal .sub {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 22px;
+        }
+
+        .password-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .password-input-group input {
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 6px;
+            font-weight: 600;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .password-input-group input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+        }
+
+        .password-input-group .pwd-error {
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 500;
+            min-height: 22px;
+        }
+
+        .password-btn {
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.12s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+        }
+
+        .password-btn:hover {
+            box-shadow: 0 6px 28px rgba(124, 58, 237, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .password-btn:active {
+            transform: scale(0.96);
+        }
+
+        .password-cancel-btn {
+            padding: 10px;
+            background: none;
+            color: #94a3b8;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .password-cancel-btn:hover {
+            color: #64748b;
+        }
+
+        /* ===== 记事本弹窗（只读） ===== */
+        .note-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.50);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .note-overlay.active {
+            display: flex;
+        }
+
+        .note-modal {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 32px 36px 28px;
+            max-width: 680px;
+            width: 94%;
+            max-height: 88vh;
+            box-shadow: 0 40px 90px rgba(0, 0, 0, 0.30);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        .note-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .note-modal-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-modal-header .badge {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .note-modal-close {
+            background: none;
+            border: none;
+            font-size: 26px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0 6px;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1;
+        }
+
+        .note-modal-close:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+
+        .note-display {
+            width: 100%;
+            min-height: 320px;
+            max-height: 55vh;
+            padding: 18px 22px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 15px;
+            font-family: 'Segoe UI', 'PingFang SC', 'SF Mono', monospace;
+            line-height: 1.9;
+            color: #1e293b;
+            background: #fafbfc;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            user-select: text;
+            cursor: default;
+        }
+
+        .note-display::-webkit-scrollbar {
+            width: 6px;
+        }
+        .note-display::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .note-display::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .note-display::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .note-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .note-btn-close {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            background: #f1f3f5;
+            color: #475569;
+            transition: transform 0.12s, box-shadow 0.2s;
+        }
+
+        .note-btn-close:hover {
+            background: #e9edf2;
+        }
+
+        .note-btn-close:active {
+            transform: scale(0.96);
+        }
+
+        .note-footer-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== 动画 ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-10px);
+            }
+            40% {
+                transform: translateX(10px);
+            }
+            60% {
+                transform: translateX(-6px);
+            }
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             body {
                 padding: 1.2rem 1rem 2rem;
             }
-
             .header h1 {
                 font-size: 1.4rem;
             }
-
             .grid {
                 grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
                 gap: 1rem;
             }
-
             .tool-card {
                 padding: 1.2rem 0.9rem 1rem;
             }
-
             .tool-icon {
                 font-size: 2rem;
             }
@@ -200,26 +500,18 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 0.8rem;
             }
-
             .header h1 {
                 font-size: 1.2rem;
             }
-
             .badge {
                 font-size: 0.75rem;
                 padding: 0.2rem 0.8rem;
             }
-
             .tool-name {
                 font-size: 0.95rem;
             }
-
             .tool-desc {
                 font-size: 0.72rem;
-            }
-
-            .empty-state i {
-                font-size: 2.2rem;
             }
         }
 
@@ -229,7 +521,6 @@
             }
         }
 
-        /* ===== 滚动条 ===== */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -252,8 +543,8 @@
 
     <div class="container">
 
-        <!-- ===== 头部 ===== -->
-        <header class="header">
+        <!-- ===== 头部（点击5次触发密码） ===== -->
+        <header class="header" id="headerTrigger">
             <h1><i class="fas fa-toolbox"></i>工具箱</h1>
             <span class="badge"><i class="far fa-folder-open"></i> 共 <span id="toolCount">0</span> 个工具</span>
         </header>
@@ -265,54 +556,85 @@
 
     </div>
 
-    <script>
-        /**
-         * ============================================================
-         *  📦 工具数据 —— 在这里添加你的工具！
-         *  ------------------------------------------------------------
-         *  每个工具对象字段：
-         *    name        : 工具名称（必填）
-         *    description : 简短描述（可选）
-         *    icon        : Font Awesome 类名（如 'fa-calculator'）
-         *                  或 Emoji（如 '🧮'）
-         *    path        : HTML 文件路径，如 './tools/calc.html'
-         *  ------------------------------------------------------------
-         *  💡 添加新工具：在数组中新增一个对象即可。
-         *  💡 删除/修改：直接编辑对应对象。
-         * ============================================================ */
-        const tools = [
-    {
-        name: '拼豆图纸像素化',
-        description: '图片转像素图纸，支持坐标轴与颜色精度',
-        icon: '🧩',
-        path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/tmtx.html'
-    },
-    {
-        name: '透明图像生成',
-        description: '为图片添加圆角矩形阴影，输出透明PNG',
-        icon: '🖼️',
-        path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/scpdtz.html'
-    }
-    ];
+    <!-- ============================================================
+    📝 笔记内容定义（您在这里修改笔记！）
+    下方 div#noteSource 中的文字就是所有访问者看到的笔记内容。
+    修改后保存文件即可，无需任何其他操作。
+    ============================================================ -->
+    <div id="noteSource" style="display:none;">
+        一群没爹，欢迎访问
+		yuyuyu.net
+		快递：23——7112
+    </div>
 
+    <!-- ============================================================
+    🔒 密码弹窗
+    ============================================================ -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-modal">
+            <span class="lock-icon">🔒</span>
+            <h2>输入密码</h2>
+            <p class="sub">请输入密码以查看隐藏记事本</p>
+            <div class="password-input-group">
+                <input type="password" id="passwordInput" placeholder="请输入密码" maxlength="20" autocomplete="off" />
+                <div class="pwd-error" id="pwdError"></div>
+                <button class="password-btn" id="pwdConfirmBtn">确认</button>
+                <button class="password-cancel-btn" id="pwdCancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    📖 记事本弹窗（只读展示）
+    ============================================================ -->
+    <div class="note-overlay" id="noteOverlay">
+        <div class="note-modal">
+            <div class="note-modal-header">
+                <h2>
+                    <i>📓</i> 我的笔记
+                    <span class="badge">🔒 只读</span>
+                </h2>
+                <button class="note-modal-close" id="noteCloseBtn">&times;</button>
+            </div>
+            <div class="note-display" id="noteDisplay"></div>
+            <div class="note-modal-footer">
+                <span class="note-footer-hint">📌 内容只读 · 不可编辑</span>
+                <button class="note-btn-close" id="noteCloseBtn2">✕ 关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
         // ============================================================
-        //  渲染
+        //  1. 工具箱数据渲染（与原来一致）
         // ============================================================
+        const tools = [{
+            name: '拼豆图纸像素化',
+            description: '图片转像素图纸，支持坐标轴与颜色精度',
+            icon: '🧩',
+            path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/tmtx.html'
+        }, {
+            name: '透明图像生成',
+            description: '为图片添加圆角矩形阴影，输出透明PNG',
+            icon: '🖼️',
+            path: 'https://wafyuyuyuwaf.github.io/wafyuyuyuwaf/my_tools/scpdtz.html'
+        }];
+
         const grid = document.getElementById('toolGrid');
         const countEl = document.getElementById('toolCount');
 
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
         function render() {
             countEl.textContent = tools.length;
-
             if (tools.length === 0) {
-                grid.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-cube"></i>
-                        </div>
-                    `;
+                grid.innerHTML = `<div class="empty-state"><i class="fas fa-cube"></i></div>`;
                 return;
             }
-
             let html = '';
             tools.forEach(t => {
                 const desc = t.description || '点击打开';
@@ -321,31 +643,19 @@
                     `<i class="fas ${t.icon}"></i>` :
                     `<span style="font-size:2.2rem;">${t.icon || '🔧'}</span>`;
                 const safePath = t.path.replace(/"/g, '&quot;');
-
                 html += `
                         <div class="tool-card" data-path="${safePath}" role="button" tabindex="0">
                             <div class="tool-icon">${iconHtml}</div>
                             <div class="tool-name">${escapeHtml(t.name)}</div>
                             <div class="tool-desc">${escapeHtml(desc)}</div>
-                            <div class="card-footer">
-                                打开 <i class="fas fa-arrow-right"></i>
-                            </div>
+                            <div class="card-footer">打开 <i class="fas fa-arrow-right"></i></div>
                         </div>
                     `;
             });
-
             grid.innerHTML = html;
         }
 
-        function escapeHtml(text) {
-            const d = document.createElement('div');
-            d.textContent = text;
-            return d.innerHTML;
-        }
-
-        // ============================================================
-        //  点击卡片 → 打开工具
-        // ============================================================
+        // 卡片点击打开新窗口
         grid.addEventListener('click', (e) => {
             const card = e.target.closest('.tool-card');
             if (!card) return;
@@ -353,22 +663,133 @@
             if (path) window.open(path, '_blank');
         });
 
-        grid.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                const card = e.target.closest('.tool-card');
-                if (card) {
-                    e.preventDefault();
-                    card.click();
-                }
-            }
-        });
-
-        // ============================================================
-        //  启动
-        // ============================================================
         render();
 
-        // 静默启动，无任何控制台输出
+        // ============================================================
+        //  2. 隐藏记事本功能（点击标题5次触发密码）
+        // ============================================================
+        (function() {
+            'use strict';
+
+            // ---- DOM 引用 ----
+            const header = document.getElementById('headerTrigger');
+            const passwordOverlay = document.getElementById('passwordOverlay');
+            const noteOverlay = document.getElementById('noteOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const pwdError = document.getElementById('pwdError');
+            const pwdConfirmBtn = document.getElementById('pwdConfirmBtn');
+            const pwdCancelBtn = document.getElementById('pwdCancelBtn');
+            const noteDisplay = document.getElementById('noteDisplay');
+            const noteCloseBtn = document.getElementById('noteCloseBtn');
+            const noteCloseBtn2 = document.getElementById('noteCloseBtn2');
+
+            const CORRECT_PASSWORD = '1234566678';
+            let clickCount = 0;
+            let clickTimer = null;
+
+            // ---- 获取笔记内容 ----
+            function getNoteContent() {
+                const source = document.getElementById('noteSource');
+                return source ? (source.textContent || source.innerText || '') :
+                    '📝 暂无笔记内容，请在 HTML 中编辑 noteSource。';
+            }
+
+            // ---- 密码弹窗 ----
+            function openPasswordDialog() {
+                passwordOverlay.classList.add('active');
+                passwordInput.value = '';
+                pwdError.textContent = '';
+                setTimeout(() => passwordInput.focus(), 100);
+            }
+
+            function closePasswordDialog() {
+                passwordOverlay.classList.remove('active');
+                passwordInput.value = '';
+                pwdError.textContent = '';
+            }
+
+            // ---- 记事本弹窗 ----
+            function openNote() {
+                noteDisplay.textContent = getNoteContent();
+                noteOverlay.classList.add('active');
+                noteDisplay.scrollTop = 0;
+            }
+
+            function closeNote() {
+                noteOverlay.classList.remove('active');
+            }
+
+            // ---- 密码验证 ----
+            function verifyPassword() {
+                const input = passwordInput.value.trim();
+                if (input === CORRECT_PASSWORD) {
+                    closePasswordDialog();
+                    openNote();
+                } else {
+                    pwdError.textContent = '❌ 密码错误，请重试';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    passwordInput.style.animation = 'none';
+                    requestAnimationFrame(() => {
+                        passwordInput.style.animation = 'shake 0.4s ease';
+                    });
+                }
+            }
+
+            // ============================================================
+            //  事件绑定
+            // ============================================================
+
+            // ---- 标题点击计数（无任何提示） ----
+            header.addEventListener('click', function(e) {
+                clickCount++;
+                clearTimeout(clickTimer);
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 800); // 800ms内连击有效
+
+                if (clickCount >= 5) {
+                    clickCount = 0;
+                    clearTimeout(clickTimer);
+                    openPasswordDialog();
+                }
+            });
+
+            // ---- 密码确认 ----
+            pwdConfirmBtn.addEventListener('click', verifyPassword);
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyPassword();
+                }
+            });
+
+            // ---- 密码取消 ----
+            pwdCancelBtn.addEventListener('click', closePasswordDialog);
+            passwordOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closePasswordDialog();
+            });
+
+            // ---- 关闭记事本 ----
+            noteCloseBtn.addEventListener('click', closeNote);
+            noteCloseBtn2.addEventListener('click', closeNote);
+            noteOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeNote();
+            });
+
+            // ---- ESC 关闭弹窗（保留标准交互） ----
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (noteOverlay.classList.contains('active')) {
+                        closeNote();
+                    } else if (passwordOverlay.classList.contains('active')) {
+                        closePasswordDialog();
+                    }
+                }
+            });
+
+            // 静默启动，无控制台输出
+        })();
     </script>
 
 </body>
