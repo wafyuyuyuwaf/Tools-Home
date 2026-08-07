@@ -175,15 +175,16 @@
         }
 
         .tool-desc {
-            font-size: 0.82rem;
-            color: #6b7379;
-            line-height: 1.45;
-            font-weight: 430;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 0 1px rgba(255,255,255,0.5);
-        }
+		    font-size: 0.82rem;
+		    color: #6b7379;
+		    line-height: 1.5;
+		    font-weight: 430;
+		    white-space: normal;      /* 允许自动换行 */
+		    overflow: visible;        /* 不隐藏内容 */
+		    text-overflow: unset;     /* 移除省略号 */
+		    text-shadow: 0 0 1px rgba(255,255,255,0.5);
+		    word-break: break-word;   /* 防止长单词撑破卡片 */
+}
 
         .card-arrow {
             flex-shrink: 0;
